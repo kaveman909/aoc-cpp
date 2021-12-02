@@ -14,12 +14,13 @@ int main(int argc, char *argv[]) {
   int dp = 0;
 
   for (const auto &dir : directions) {
-    int x = *(dir.end() - 1) - '0';
+    const int x = dir.back() - '0';
+    const auto instr = dir.front();
 
-    if (dir.front() == 'f') {  // *f*orward
+    if (instr == 'f') {  // forward
       hz += x;
       dp += x * aim_dp;
-    } else if (dir.front() == 'u') {  // *u*p
+    } else if (instr == 'u') {  // up
       aim_dp -= x;
     } else {  // down
       aim_dp += x;
