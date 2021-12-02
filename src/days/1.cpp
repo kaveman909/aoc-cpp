@@ -27,12 +27,10 @@ int main(int argc, char *argv[]) {
   // Part 2
   std::vector<int> sums;
   // Add first and second
-  std::transform(depths.begin(), depths.end() - 1, depths.begin() + 1,
+  std::transform(depths.begin(), depths.end() - 2, depths.begin() + 1,
                  std::back_inserter(sums), std::plus<int>());
   // now add the third to the existing sum
-  std::transform(sums.begin(), sums.end() - 1, depths.begin() + 2, sums.begin(),
+  std::transform(sums.begin(), sums.end(), depths.begin() + 2, sums.begin(),
                  std::plus<int>());
-  // (one extra element will exist at the end of 'sums' at this point)
-  sums.erase(sums.end() - 1);
   fmt::print("Part 2: {}\n", diff_and_count(sums));
 }
