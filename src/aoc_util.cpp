@@ -1,4 +1,5 @@
 #include "aoc_util.h"
+
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -16,9 +17,7 @@ std::vector<std::string> process_input(char *fpath) {
   return v;
 }
 
-MeasureTime::MeasureTime() {
-  start = high_resolution_clock::now();
-}
+MeasureTime::MeasureTime() { start = high_resolution_clock::now(); }
 
 MeasureTime::MeasureTime(std::string str) : label{str} {
   start = high_resolution_clock::now();
@@ -27,5 +26,6 @@ MeasureTime::MeasureTime(std::string str) : label{str} {
 MeasureTime::~MeasureTime() {
   auto stop = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>(stop - start);
-  std::cout << "Duration(" << label << "): " << duration.count() << " microseconds" << '\n';
+  std::cout << "Duration(" << label << "): " << duration.count()
+            << " microseconds" << '\n';
 }
