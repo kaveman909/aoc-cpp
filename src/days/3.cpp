@@ -72,7 +72,12 @@ int main(int argc, char *argv[]) {
   fmt::print("Part 1: {}\n", gamma * epsilon);
 
   // Part 2
-  const int oxy_gen = process_report(diag_report, 1);
-  const int co2_scr = process_report(diag_report, 0);
+  int oxy_gen;
+  int co2_scr;
+  {
+    MeasureTime m("Part 2");
+    oxy_gen = process_report(diag_report, 1);
+    co2_scr = process_report(diag_report, 0);
+  }
   fmt::print("Part 2: {}\n", oxy_gen * co2_scr);
 }

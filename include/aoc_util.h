@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <fstream>
 #include <string>
 #include <type_traits>
@@ -22,3 +23,14 @@ auto process_input(char *fpath, F conv_f) {
 
   return v;
 }
+
+class MeasureTime {
+ private:
+  std::chrono::time_point<std::chrono::high_resolution_clock> start;
+  std::string label;
+
+ public:
+  MeasureTime();
+  MeasureTime(std::string str);
+  ~MeasureTime();
+};
