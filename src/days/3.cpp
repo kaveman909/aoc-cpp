@@ -49,26 +49,30 @@ int main(int argc, char *argv[]) {
   });
 
   // Part 1
-  std::array<int, NUM_DIGITS> counters{0};
+  int gamma = 0;
+  int epsilon;
+  {
+    MeasureTime m("Part 1");
+    std::array<int, NUM_DIGITS> counters{0};
 
-  for (const auto &num : diag_report) {
-    for (int i = 0; i < NUM_DIGITS; i++) {
-      if (num & (1 << i)) {
-        counters[i]++;
-      } else {
-        counters[i]--;
+    for (const auto &num : diag_report) {
+      for (int i = 0; i < NUM_DIGITS; i++) {
+        if (num & (1 << i)) {
+          counters[i]++;
+        } else {
+          counters[i]--;
+        }
       }
     }
-  }
 
-  int gamma = 0;
-  for (int i = 0; i < NUM_DIGITS; i++) {
-    if (counters[i] > 0) {
-      gamma |= (1 << i);
+    for (int i = 0; i < NUM_DIGITS; i++) {
+      if (counters[i] > 0) {
+        gamma |= (1 << i);
+      }
     }
-  }
 
-  const int epsilon = gamma ^ 0xfff;
+    epsilon = gamma ^ 0xfff;
+  }
   fmt::print("Part 1: {}\n", gamma * epsilon);
 
   // Part 2
