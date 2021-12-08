@@ -10,8 +10,10 @@ static const int MAX_LEN = 150;
 
 std::vector<std::string> process_input(char *fpath);
 
+// clang requires the 'typename' prior to the std::invoke_result, whereas
+// gcc does not.  Seems to be a lack in the clang C++20 implementation.
 template <typename F,
-          typename T = std::invoke_result<F, const std::string &>::type>
+          typename T = typename std::invoke_result<F, const std::string &>::type>
 auto process_input(char *fpath, F conv_f) {
   std::ifstream in(fpath);
   std::vector<T> v;

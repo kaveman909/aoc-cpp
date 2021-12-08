@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_C_COMPILER $ENV{HOME}/GCC/bin/gcc)
-set(CMAKE_CXX_COMPILER $ENV{HOME}/GCC/bin/g++)
-
 project(AOC_2021)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -38,6 +35,6 @@ target_link_libraries(day${x} PUBLIC fmt aocutil)
 
 # Test Section
 
-add_test(NAME d${x} COMMAND day${x} $ENV{HOME}/aoc-2021/input/${x}.txt)
+add_test(NAME d${x} COMMAND day${x} ${CMAKE_CURRENT_SOURCE_DIR}/input/${x}.txt)
 
 endforeach()
