@@ -11,7 +11,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-include_directories(include lib/cppitertools lib/fmt/include)
+include_directories(include lib/cppitertools lib/fmt/include
+                    /opt/homebrew/Cellar/boost/1.76.0/include)
 
 enable_testing()
 

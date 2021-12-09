@@ -1,8 +1,10 @@
 #include "aoc_util.h"
 
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std::chrono;
 
