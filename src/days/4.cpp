@@ -56,6 +56,7 @@ struct Board {
 };
 
 int main(int argc, char *argv[]) {
+  MeasureTime m{"Total"};
   assert(argc == 2);
   std::vector<int> draws;
   std::vector<std::vector<int>> boards;
@@ -81,7 +82,7 @@ int main(int argc, char *argv[]) {
         const auto col = pos % 5;
         tracker.rows[row]++;
         tracker.cols[col]++;
-        if (tracker.rows[row] == 5 || tracker.cols[col] == 5) {
+        if (!winner && (tracker.rows[row] == 5 || tracker.cols[col] == 5)) {
           // found the winner
           winner = 1;
           const auto winner_sum =
