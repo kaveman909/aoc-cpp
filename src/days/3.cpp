@@ -1,10 +1,4 @@
-#include <array>
-#include <cassert>
-#include <string>
-#include <vector>
-
-#include "aoc_util.h"
-#include "fmt/core.h"
+#include "aoc_includes.h"
 
 const int NUM_DIGITS = 12;
 
@@ -41,10 +35,8 @@ int process_report(std::vector<int> report, const bool selector) {
   return report[0];
 }
 
-int main(int argc, char *argv[]) {
-  assert(argc == 2);
-
-  const auto diag_report = process_input(argv[1], [](const std::string &x) {
+void aoc(char *f) {
+  const auto diag_report = process_input(f, [](const std::string &x) {
     return (int)strtoull(x.c_str(), NULL, 2);
   });
 

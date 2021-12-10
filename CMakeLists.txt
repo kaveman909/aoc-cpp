@@ -31,7 +31,7 @@ foreach(x RANGE 1 ${NUM_FILES})
 
 # AoC Days Section
 
-add_executable(day${x} src/days/${x}.cpp)
+add_executable(day${x} src/main.cpp src/days/${x}.cpp)
 target_link_libraries(day${x} PUBLIC fmt aocutil)
 
 # Test Section

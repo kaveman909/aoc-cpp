@@ -1,19 +1,4 @@
-#include <algorithm>
-#include <array>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/trim.hpp>
-#include <cassert>
-#include <fstream>
-#include <numeric>
-#include <string>
-#include <tuple>
-#include <vector>
-
-#include "aoc_util.h"
-#include "fmt/core.h"
-#include "fmt/ranges.h"
-#include "itertools.hpp"
+#include "aoc_includes.h"
 
 void process_input(char *fpath, std::vector<int> &draws,
                    std::vector<std::vector<int>> &boards) {
@@ -55,12 +40,12 @@ struct Board {
   std::array<int, 5> cols;
 };
 
-int main(int argc, char *argv[]) {
+void aoc(char *f) {
   MeasureTime m{"Total"};
-  assert(argc == 2);
+
   std::vector<int> draws;
   std::vector<std::vector<int>> boards;
-  process_input(argv[1], draws, boards);
+  process_input(f, draws, boards);
 
   std::vector<Board> trackers;
   trackers.resize(boards.size());
@@ -111,5 +96,5 @@ int main(int argc, char *argv[]) {
   }
 
 exit:
-  return 0;
+  (void)0;
 }

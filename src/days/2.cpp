@@ -1,13 +1,7 @@
-#include <cassert>
-#include <string>
+#include "aoc_includes.h"
 
-#include "aoc_util.h"
-#include "fmt/core.h"
-
-int main(int argc, char *argv[]) {
-  assert(argc == 2);
-
-  const auto directions = process_input(argv[1]);
+void aoc(char *f) {
+  const auto directions = process_input(f);
 
   int hz = 0;
   int aim_dp = 0;

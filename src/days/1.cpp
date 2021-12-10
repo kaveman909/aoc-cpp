@@ -1,12 +1,4 @@
-#include <algorithm>
-#include <cassert>
-#include <numeric>
-#include <string>
-#include <vector>
-
-#include "aoc_util.h"
-#include "fmt/core.h"
-#include "fmt/ranges.h"
+#include "aoc_includes.h"
 
 auto diff_and_count(const std::vector<int> &in) {
   std::vector<int> diffs;
@@ -16,12 +8,10 @@ auto diff_and_count(const std::vector<int> &in) {
   return out;
 }
 
-int main(int argc, char *argv[]) {
-  assert(argc == 2);
-
+void aoc(char *f) {
   // Part 1
   const auto depths =
-      process_input(argv[1], [](const std::string &x) { return std::stoi(x); });
+      process_input(f, [](const std::string &x) { return std::stoi(x); });
   fmt::print("Part 1: {}\n", diff_and_count(depths));
 
   // Part 2

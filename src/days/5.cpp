@@ -1,14 +1,4 @@
-#include <algorithm>  // count_if
-#include <cassert>
-#include <numeric>  // transform_reduce
-#include <regex>
-#include <string>
-#include <vector>
-
-#include "aoc_util.h"
-#include "fmt/core.h"
-#include "fmt/ranges.h"
-#include "itertools.hpp"
+#include "aoc_includes.h"
 
 struct Point {
   int x;
@@ -63,12 +53,10 @@ int find_overlapping(std::vector<Line> line_list, Point max, bool pt2) {
                                });
 }
 
-int main(int argc, char *argv[]) {
-  assert(argc == 2);
-
+void aoc(char *f) {
   Point max{0, 0};
 
-  const auto line_list = process_input(argv[1], [&](const std::string s) {
+  const auto line_list = process_input(f, [&](const std::string s) {
     // e.g. 674,489 -> 745,489
     const std::regex r(R"((\d+),(\d+) -> (\d+),(\d+))");
     std::smatch m;
@@ -95,6 +83,4 @@ int main(int argc, char *argv[]) {
 
   fmt::print("Part 1: {}\n", find_overlapping(line_list, max, false));
   fmt::print("Part 2: {}\n", find_overlapping(line_list, max, true));
-
-  return 0;
 }
