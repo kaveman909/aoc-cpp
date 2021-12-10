@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
           winner = 1;
           const auto winner_sum =
               std::accumulate(winners.begin(), winners.end(), 0);
-          if (winner_sum == boards.size()) {
+          if (static_cast<size_t>(winner_sum) == boards.size()) {
             last_found = true;
           }
           if (!found || last_found) {
