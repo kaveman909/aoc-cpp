@@ -1,14 +1,17 @@
 #include "aoc_includes.h"
 
+// These globals could be avoided but make accessing from find_valid_neighbors()
+// more straightforward.
 static int x_max;
 static int y_max;
-std::vector<std::vector<int>> grid;
+static std::vector<std::vector<int>> grid;
 
 struct Point {
   int x;
   int y;
 };
 
+// Neighbor parameters
 struct NP {
   bool condition;
   int x;
