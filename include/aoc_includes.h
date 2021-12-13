@@ -14,6 +14,7 @@
 #include <tuple>
 #include <type_traits>
 #include <vector>
+#include <map>
 
 #include "aoc_util.h"
 #include "fmt/core.h"
