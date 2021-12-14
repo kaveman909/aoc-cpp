@@ -8,13 +8,14 @@
 #include <cassert>
 #include <chrono>
 #include <fstream>
+#include <map>
 #include <numeric>
 #include <regex>
+#include <stack>
 #include <string>
 #include <tuple>
 #include <type_traits>
 #include <vector>
-#include <map>
 
 #include "aoc_util.h"
 #include "fmt/core.h"
