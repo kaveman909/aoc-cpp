@@ -3,21 +3,23 @@
 struct Cave {
   std::string name;
   bool is_large;
-  bool visited;
+  int visited;
 };
 
 class CaveSystem {
  public:
-  CaveSystem(char *f);
+  CaveSystem(char *fpath, bool _pt1);
   void explore(const std::string &name);
   int found = 0;
+  bool pt1;
 
  private:
+  bool twice = false;
   std::unordered_map<std::string, Cave> caves;
   std::unordered_map<std::string, std::vector<Cave *>> neighbors;
 };
 
-CaveSystem::CaveSystem(char *fpath) {
+CaveSystem::CaveSystem(char *fpath, bool _pt1) : pt1{_pt1} {
   std::ifstream in(fpath);
 
   for (char buf[MAX_LEN]; in.getline(buf, MAX_LEN);) {
@@ -35,20 +37,36 @@ CaveSystem::CaveSystem(char *fpath) {
 }
 
 void CaveSystem::explore(const std::string &name) {
-  caves[name].visited = true;
+  if (++caves[name].visited > 1 && !caves[name].is_large) {
+    twice = true;
+  }
   for (auto &neighbor : neighbors[name]) {
     if (neighbor->name == "end") {
       found++;
-    } else if (neighbor->visited && !neighbor->is_large) {
+    } else if (neighbor->name == "start") {
+    } else if (neighbor->visited && !neighbor->is_large && (twice || pt1)) {
     } else {
       explore(neighbor->name);
     }
   }
-  caves[name].visited = false;
+  if (--caves[name].visited > 0 && !caves[name].is_large) {
+    twice = false;
+  }
 }
 
 void aoc(char *f) {
-  CaveSystem cs{f};
-  cs.explore("start");
+  CaveSystem cs{f, true};
+  {
+    MeasureTime m{"Part 1"};
+    cs.explore("start");
+  }
   fmt::print("Part 1: {}\n", cs.found);
+
+  cs.found = 0;
+  cs.pt1 = false;
+  {
+    MeasureTime m{"Part 2"};
+    cs.explore("start");
+  }
+  fmt::print("Part 2: {}\n", cs.found);
 }
