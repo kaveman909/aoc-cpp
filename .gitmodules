@@ -4,3 +4,6 @@
 [submodule "lib/cppitertools"]
 	path = lib/cppitertools
 	url = https://github.com/ryanhaining/cppitertools.git
+[submodule "lib/scnlib"]
+	path = lib/scnlib
+	url = https://github.com/eliaskosunen/scnlib.git

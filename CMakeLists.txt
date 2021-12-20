@@ -19,6 +19,7 @@ enable_testing()
 # Library Section
 add_library(aocutil STATIC src/aoc_util.cpp)
 add_subdirectory(lib/fmt)
+add_subdirectory(lib/scnlib)
 
 # Determine how many Advent days to build
 execute_process(COMMAND ls src/days
@@ -32,7 +33,7 @@ foreach(x RANGE 1 ${NUM_FILES})
 # AoC Days Section
 
 add_executable(day${x} src/main.cpp src/days/${x}.cpp)
-target_link_libraries(day${x} PUBLIC fmt aocutil)
+target_link_libraries(day${x} PUBLIC fmt scn aocutil)
 
 # Test Section
 
