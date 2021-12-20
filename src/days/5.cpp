@@ -1,9 +1,6 @@
 #include "aoc_includes.h"
 
-struct Point {
-  int x;
-  int y;
-};
+using namespace advent;
 
 struct Line {
   Point begin;

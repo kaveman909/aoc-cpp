@@ -1,15 +1,12 @@
 #include "aoc_includes.h"
 
+using namespace advent;
+
 // These globals could be avoided but make accessing from find_valid_neighbors()
 // more straightforward.
 static int x_max;
 static int y_max;
 static std::vector<std::vector<int>> grid;
-
-struct Point {
-  int x;
-  int y;
-};
 
 // Neighbor parameters
 struct NP {

@@ -31,3 +31,17 @@ MeasureTime::~MeasureTime() {
   std::cout << "Duration(" << label << "): " << duration.count()
             << " microseconds" << '\n';
 }
+
+// namespace advent {
+// bool operator==(const Point &a, const Point &b) {
+//   return (a.x == b.x) && (a.y == b.y);
+// }
+
+// bool operator<(const Point &a, const Point &b) {
+//   if (a.x < b.x) return true;
+//   if (a.x > b.x) return false;
+//   if (a.y < b.y) return true;
+//   if (a.y > b.y) return false;
+//   return false;
+// }
+// }  // namespace advent

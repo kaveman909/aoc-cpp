@@ -1,5 +1,26 @@
 #include "aoc_includes.h"
 
+long count_max_min_singles(const std::string &polymer,
+                           std::unordered_map<std::string, long> &pair_counters,
+                           std::unordered_map<char, long> single_counters) {
+  for (auto &count : pair_counters) {
+    for (int i = 0; i < 2; i++) {
+      single_counters[count.first[i]] += count.second;
+    }
+  }
+  std::for_each(single_counters.begin(), single_counters.end(),
+                [](auto &count) { count.second /= 2; });
+  // compensate for first/last element in polymer not being double-counted
+  single_counters[polymer.front()]++;
+  single_counters[polymer.back()]++;
+
+  auto [min, max] = std::minmax_element(
+      single_counters.begin(), single_counters.end(),
+      [](const auto &p1, const auto &p2) { return p1.second < p2.second; });
+
+  return max->second - min->second;
+}
+
 auto local_process_input(char *fpath) {
   std::unordered_map<std::string, std::pair<std::string, std::string>>
       pair_rules;
@@ -39,6 +60,10 @@ void aoc(char *f) {
   {
     MeasureTime m{"Sim Time"};
     for (int i = 0; i < 40; i++) {
+      if (i == 10) {
+        fmt::print("Part 1: {}\n", count_max_min_singles(polymer, pair_counters,
+                                                         single_counters));
+      }
       auto pair_counters_cp = pair_counters;
       for (const auto &rule : pair_rules) {
         if (pair_counters_cp[rule.first] > 0) {
@@ -52,20 +77,6 @@ void aoc(char *f) {
     }
   }
 
-  // (3) Get the single poly counts
-  for (auto &count : pair_counters) {
-    for (int i = 0; i < 2; i++) {
-      single_counters[count.first[i]] += count.second;
-    }
-  }
-  std::for_each(single_counters.begin(), single_counters.end(),
-                [](auto &count) { count.second /= 2; });
-  // compensate for first/last element in polymer not being double-counted
-  single_counters[polymer.front()]++;
-  single_counters[polymer.back()]++;
-
-  auto [min, max] = std::minmax_element(
-      single_counters.begin(), single_counters.end(),
-      [](const auto &p1, const auto &p2) { return p1.second < p2.second; });
-  fmt::print("Part 2: {}\n", max->second - min->second);
+  fmt::print("Part 2: {}\n",
+             count_max_min_singles(polymer, pair_counters, single_counters));
 }

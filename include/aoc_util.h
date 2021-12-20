@@ -5,6 +5,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <compare>
 
 static const int MAX_LEN = 5000;
 
@@ -36,3 +37,11 @@ class MeasureTime {
   MeasureTime(std::string str);
   ~MeasureTime();
 };
+
+namespace advent {
+struct Point {
+  int x;
+  int y;
+  friend auto operator<=>(Point const &lhs, Point const &rhs) = default;
+};
+}  // namespace advent
