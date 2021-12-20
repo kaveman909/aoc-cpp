@@ -1,11 +1,11 @@
 #pragma once
 
 #include <chrono>
+#include <compare>
 #include <fstream>
 #include <string>
 #include <type_traits>
 #include <vector>
-#include <compare>
 
 static const int MAX_LEN = 5000;
 
