@@ -16,10 +16,38 @@ void aoc(char *f) {
     return row;
   });
 
+  // Expand the grid per Part 2
+  const int EXPAND_SIZE = 5;
+  const int y_max_orig = grid.size();
+  const int x_max_orig = grid.front().size();
+  // First, expand in the x-direction
+  for (auto &row : grid) {
+    for (int i = 1; i < EXPAND_SIZE; i++) {
+      std::transform(row.begin(), row.begin() + x_max_orig,
+                     std::back_inserter(row), [&](auto el) {
+                       el.risk = ((el.risk - 1 + i) % 9) + 1;
+                       return el;
+                     });
+    }
+  }
+  // Next, expand in the y-direction
+  for (int i = 1; i < EXPAND_SIZE; i++) {
+    for (int y = 0; y < y_max_orig; y++) {
+      std::vector<Loc> new_row;
+      std::transform(grid[y].begin(), grid[y].end(),
+                     std::back_inserter(new_row), [&](auto el) {
+                       el.risk = ((el.risk - 1 + i) % 9) + 1;
+                       return el;
+                     });
+      grid.emplace_back(new_row);
+    }
+  }
+
   std::deque<Loc *> unvisited;
   const int y_max = grid.size();
   const int x_max = grid.front().size();
-  const auto loc_end = &grid[y_max - 1][x_max - 1];
+  const auto loc_end = &grid[y_max_orig - 1][x_max_orig - 1];
+  const auto loc_end2 = &grid[y_max - 1][x_max - 1];
 
   // Determine neighboring points and cache these for later traversal
   for (int y = 0; y < y_max; y++) {
@@ -47,6 +75,8 @@ void aoc(char *f) {
     const auto current_loc = unvisited.front();
     if (current_loc == loc_end) {
       fmt::print("Part 1: {}\n", current_loc->risk_sum);
+    } else if (current_loc == loc_end2) {
+      fmt::print("Part 2: {}\n", current_loc->risk_sum);
       break;
     }
 
