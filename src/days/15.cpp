@@ -59,12 +59,12 @@ void aoc(char *f) {
           grid[y][x].nbrs.emplace_back(&grid[np.y][np.x]);
         }
       }
-      unvisited.emplace_back(&grid[y][x]);
     }
   }
 
   // Prime the algorithm by setting cost to the starting node to 0
   grid[0][0].risk_sum = 0;
+  unvisited.emplace_back(&grid[0][0]);
 
   while (1) {
     // (1) set current location to lowest tentative risk
@@ -85,6 +85,10 @@ void aoc(char *f) {
       if (const auto cost_to_nbr = current_loc->risk_sum + nbr->risk;
           cost_to_nbr < nbr->risk_sum) {
         nbr->risk_sum = cost_to_nbr;
+        if (std::find(unvisited.begin(), unvisited.end(), nbr) ==
+            unvisited.end()) {
+          unvisited.emplace_back(nbr);
+        }
       }
     }
 
