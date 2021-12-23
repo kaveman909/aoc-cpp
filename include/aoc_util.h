@@ -7,6 +7,8 @@
 #include <type_traits>
 #include <vector>
 
+#define NOOP []() {}
+
 static const int MAX_LEN = 5000;
 
 std::vector<std::string> process_input(char *fpath);
@@ -44,4 +46,12 @@ struct Point {
   int y;
   friend auto operator<=>(Point const &lhs, Point const &rhs) = default;
 };
+
+/** Neighbor parameters */
+struct NP {
+  bool condition;
+  int x;
+  int y;
+};
+
 }  // namespace advent

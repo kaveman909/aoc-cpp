@@ -8,13 +8,6 @@ static int x_max;
 static int y_max;
 static std::vector<std::vector<int>> grid;
 
-// Neighbor parameters
-struct NP {
-  bool condition;
-  int x;
-  int y;
-};
-
 int find_valid_neighbors(const int x, const int y) {
   int valid_neighbors = 1;
   // clear the current location to make sure we never revisit; as we

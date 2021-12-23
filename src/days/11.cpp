@@ -1,11 +1,6 @@
 #include "aoc_includes.h"
 
-// Neighbor parameters
-struct NP {
-  bool condition;
-  int x;
-  int y;
-};
+using namespace advent;
 
 void aoc(char *f) {
   auto grid = process_input(f, [](std::string s) {
