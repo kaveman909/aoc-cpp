@@ -22,4 +22,6 @@
 #include "fmt/core.h"
 #include "fmt/ranges.h"
 #include "itertools.hpp"
+#include "scn/scn.h"
+#include "scn/tuple_return.h"
 #include "zip_longest.hpp"
