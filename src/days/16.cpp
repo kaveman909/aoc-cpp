@@ -13,19 +13,24 @@ constexpr int NUM_SUBPKT_LEN = 11;
 
 enum class LengthTypeId { TotalLengthBits, NumberSubpackets };
 
-enum TypeId { Literal = 4 };
+enum class TypeId {
+  Sum,
+  Product,
+  Minimum,
+  Maximum,
+  Literal,
+  GreaterThan,
+  LessThan,
+  EqualTo
+};
 
 struct Header {
-  std::uint32_t version : VER_LEN;
-  std::uint32_t type_id : TYPE_ID_LEN;
+  std::uint8_t version;
+  TypeId type_id;
 };
 
 struct Packet {
   Header header;
-  // This could technically be a union since we are either a literal value, or
-  // contain sub-packets; however, this causes all of the special member
-  // functions to be non-trivial and it was taking way too long to try to
-  // implement all of them for very little benefit.
   literal_t literal_value;
   std::vector<Packet> packets;
 };
@@ -52,7 +57,7 @@ class RawData {
   }
 };
 
-[[nodiscard]] chunk_t RawData::bitrange(const int bit_length) {
+chunk_t RawData::bitrange(const int bit_length) {
   if (bit_length == 0) {
     return 0;
   }
@@ -80,8 +85,8 @@ class RawData {
 }
 
 Header RawData::get_header() {
-  std::uint32_t version = bitrange(VER_LEN);
-  std::uint32_t type_id = bitrange(TYPE_ID_LEN);
+  std::uint8_t version = bitrange(VER_LEN);
+  TypeId type_id = (TypeId)bitrange(TYPE_ID_LEN);
   return Header{version, type_id};
 }
 
@@ -122,10 +127,7 @@ Packet RawData::parse_packet() {
 
 literal_t RawData::get_literal_value() {
   literal_t literal_value = 0;
-  std::size_t bit_counter = 0;
   while (true) {
-    bit_counter += (LIT_CHUNK_LEN - 1);
-    assert(bit_counter <= (sizeof(literal_t) * 8));
     const auto chunk = bitrange(LIT_CHUNK_LEN);
     literal_value |= chunk & bitmask(LIT_CHUNK_LEN - 1);
     if (!(chunk & (1 << (LIT_CHUNK_LEN - 1)))) {
@@ -144,6 +146,62 @@ std::uint32_t get_version_sum(const Packet &packet_in) {
   return sum;
 }
 
+std::uint64_t get_packet_value(const Packet &packet_in) {
+  std::uint64_t value;
+  switch (packet_in.header.type_id) {
+    case TypeId::Sum:
+      value = 0;
+      for (const auto &packet : packet_in.packets) {
+        value += get_packet_value(packet);
+      }
+      break;
+    case TypeId::Product:
+      value = 1;
+      for (const auto &packet : packet_in.packets) {
+        value *= get_packet_value(packet);
+      }
+      break;
+    case TypeId::Minimum:
+      value = std::numeric_limits<decltype(value)>::max();
+      for (const auto &packet : packet_in.packets) {
+        if (const auto temp = get_packet_value(packet); temp < value) {
+          value = temp;
+        }
+      }
+      break;
+    case TypeId::Maximum:
+      value = 0;
+      for (const auto &packet : packet_in.packets) {
+        if (const auto temp = get_packet_value(packet); temp > value) {
+          value = temp;
+        }
+      }
+      break;
+    case TypeId::Literal:
+      value = packet_in.literal_value;
+      break;
+    case TypeId::GreaterThan:
+      value = get_packet_value(packet_in.packets[0]) >
+                      get_packet_value(packet_in.packets[1])
+                  ? 1
+                  : 0;
+      break;
+    case TypeId::LessThan:
+      value = get_packet_value(packet_in.packets[0]) <
+                      get_packet_value(packet_in.packets[1])
+                  ? 1
+                  : 0;
+      break;
+    case TypeId::EqualTo:
+      value = get_packet_value(packet_in.packets[0]) ==
+                      get_packet_value(packet_in.packets[1])
+                  ? 1
+                  : 0;
+      break;
+  }
+  return value;
+}
+
 void aoc(char *f) {
   scn::owning_file file{f, "r"};
   auto [result, in] = scn::scan_tuple<std::string>(file, "{}");
@@ -157,8 +215,10 @@ void aoc(char *f) {
     raw_data.data.emplace_back(udata);
   }
 
-  const auto outer_packet = raw_data.parse_packet();
-  fmt::print("Part 1: {}\n", get_version_sum(outer_packet));
-
-  NOOP();
+  {
+    MeasureTime m{"Total"};
+    const auto outer_packet = raw_data.parse_packet();
+    fmt::print("Part 1: {}\n", get_version_sum(outer_packet));
+    fmt::print("Part 2: {}\n", get_packet_value(outer_packet));
+  }
 }
