@@ -1,14 +1,17 @@
 #include "aoc_includes.h"
 
 typedef std::uint64_t chunk_t;
-typedef std::uint32_t literal_t;
+typedef std::uint64_t literal_t;
 
 constexpr int BITS_IN_CHUNK = sizeof(chunk_t) * 8;
 constexpr int VER_LEN = 3;
 constexpr int TYPE_ID_LEN = 3;
 constexpr int LIT_CHUNK_LEN = 5;  // includes 1-bit header
+constexpr int LEN_TYPE_ID_LEN = 1;
+constexpr int TOT_LEN_BITS_LEN = 15;
+constexpr int NUM_SUBPKT_LEN = 11;
 
-enum LengthTypeId { TotalLengthBits, NumberSubpackets };
+enum class LengthTypeId { TotalLengthBits, NumberSubpackets };
 
 enum TypeId { Literal = 4 };
 
@@ -30,12 +33,17 @@ struct Packet {
 class RawData {
  public:
   std::vector<chunk_t> data;
-  chunk_t bitrange(const int bit_length);
-  auto get_header();
-  auto get_literal_value();
-  int pos = 0;
+  Packet parse_packet();
 
  private:
+  Header get_header();
+  literal_t get_literal_value();
+  LengthTypeId get_length_type_id();
+  std::uint32_t get_total_length_bits();
+  std::uint32_t get_number_subpackets();
+  std::uint32_t pos = 0;
+
+  chunk_t bitrange(const int bit_length);
   static inline chunk_t bitmask(const int mask) {
     if (mask == BITS_IN_CHUNK) {
       return std::numeric_limits<chunk_t>::max();
@@ -43,25 +51,6 @@ class RawData {
     return ((chunk_t)1 << mask) - 1;
   }
 };
-
-auto RawData::get_literal_value() {
-  literal_t literal_value = 0;
-  while (true) {
-    const auto chunk = bitrange(LIT_CHUNK_LEN);
-    literal_value |= chunk & bitmask(LIT_CHUNK_LEN - 1);
-    if (!(chunk & (1 << (LIT_CHUNK_LEN - 1)))) {
-      break;
-    }
-    literal_value <<= (LIT_CHUNK_LEN - 1);
-  }
-  return literal_value;
-}
-
-auto RawData::get_header() {
-  std::uint32_t version = bitrange(VER_LEN);
-  std::uint32_t type_id = bitrange(TYPE_ID_LEN);
-  return Header{version, type_id};
-}
 
 [[nodiscard]] chunk_t RawData::bitrange(const int bit_length) {
   if (bit_length == 0) {
@@ -90,6 +79,71 @@ auto RawData::get_header() {
   return (chunk0 << bit_length1) | chunk1;
 }
 
+Header RawData::get_header() {
+  std::uint32_t version = bitrange(VER_LEN);
+  std::uint32_t type_id = bitrange(TYPE_ID_LEN);
+  return Header{version, type_id};
+}
+
+LengthTypeId RawData::get_length_type_id() {
+  return bitrange(LEN_TYPE_ID_LEN) ? LengthTypeId::NumberSubpackets
+                                   : LengthTypeId::TotalLengthBits;
+}
+
+std::uint32_t RawData::get_total_length_bits() {
+  return bitrange(TOT_LEN_BITS_LEN);
+}
+
+std::uint32_t RawData::get_number_subpackets() {
+  return bitrange(NUM_SUBPKT_LEN);
+}
+
+Packet RawData::parse_packet() {
+  const auto header = get_header();
+  auto current_packet = Packet{header};
+  if (header.type_id == TypeId::Literal) {
+    current_packet.literal_value = get_literal_value();
+  } else {
+    if (get_length_type_id() == LengthTypeId::TotalLengthBits) {
+      const auto total_length_bits = get_total_length_bits();
+      const auto start_pos = pos;
+      while (pos < (start_pos + total_length_bits)) {
+        current_packet.packets.emplace_back(parse_packet());
+      }
+    } else {  // LengthTypeId::NumberSubpackets
+      const auto number_subpackets = get_number_subpackets();
+      for (std::uint32_t i = 0; i < number_subpackets; i++) {
+        current_packet.packets.emplace_back(parse_packet());
+      }
+    }
+  }
+  return current_packet;
+}
+
+literal_t RawData::get_literal_value() {
+  literal_t literal_value = 0;
+  std::size_t bit_counter = 0;
+  while (true) {
+    bit_counter += (LIT_CHUNK_LEN - 1);
+    assert(bit_counter <= (sizeof(literal_t) * 8));
+    const auto chunk = bitrange(LIT_CHUNK_LEN);
+    literal_value |= chunk & bitmask(LIT_CHUNK_LEN - 1);
+    if (!(chunk & (1 << (LIT_CHUNK_LEN - 1)))) {
+      break;
+    }
+    literal_value <<= (LIT_CHUNK_LEN - 1);
+  }
+  return literal_value;
+}
+
+std::uint32_t get_version_sum(const Packet &packet_in) {
+  std::uint32_t sum = packet_in.header.version;
+  for (const auto &packet : packet_in.packets) {
+    sum += get_version_sum(packet);
+  }
+  return sum;
+}
+
 void aoc(char *f) {
   scn::owning_file file{f, "r"};
   auto [result, in] = scn::scan_tuple<std::string>(file, "{}");
@@ -103,10 +157,8 @@ void aoc(char *f) {
     raw_data.data.emplace_back(udata);
   }
 
-  auto header = raw_data.get_header();
-  auto outer = Packet{header};
-  if (header.type_id == TypeId::Literal) {
-    outer.literal_value = raw_data.get_literal_value();
-  }
+  const auto outer_packet = raw_data.parse_packet();
+  fmt::print("Part 1: {}\n", get_version_sum(outer_packet));
+
   NOOP();
 }
