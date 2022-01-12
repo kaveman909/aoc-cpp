@@ -102,31 +102,43 @@ static bool split_into_pair(string &str) {
   return false;
 }
 
-void aoc(char *f) {
-  scn::owning_file file{f, "r"};
-  vector<string> homework;
-  scn::scan_list(file, homework, '\n');
-
-  for (size_t i = 0; i < homework.size() - 1; i++) {
-    auto &to_reduce = homework[i + 1];
-    add_snailfish_numbers(homework[i], to_reduce);
-    while (1) {
-      auto [ei, eie] = get_explode_index(to_reduce);
-      if (ei != -1) {
-        explode_pair(ei, eie, to_reduce);
-        continue;
-      }
-      if (split_into_pair(to_reduce)) {
-        continue;
-      }
-      break;
+static void reduce_snailfish_number(string &str) {
+  while (1) {
+    auto [ei, eie] = get_explode_index(str);
+    if (ei != -1) {
+      explode_pair(ei, eie, str);
+      continue;
     }
+    if (split_into_pair(str)) {
+      continue;
+    }
+    break;
   }
-  auto &hw_sum = homework.back();
-  while (auto match = ctre::search<R"(\[(\d+),(\d+)\])">(hw_sum)) {
+}
+
+static int get_magnitude(string str) {
+  while (auto match = ctre::search<R"(\[(\d+),(\d+)\])">(str)) {
     const int magnitude =
         3 * atoi(&*match.get<1>().begin()) + 2 * atoi(&*match.get<2>().begin());
-    hw_sum.replace(match.begin(), match.end(), to_string(magnitude));
+    str.replace(match.begin(), match.end(), to_string(magnitude));
   }
-  fmt::print("Part 1: {}\n", hw_sum);
+  return stoi(str);
+}
+
+void aoc(char *f) {
+  scn::owning_file file{f, "r"};
+  const auto homework = [&]() {
+    vector<string> homework;
+    scn::scan_list(file, homework, '\n');
+    return homework;
+  }();
+
+  auto hw_sum = homework[0];
+  for (size_t i = 1; i < homework.size(); i++) {
+    auto to_reduce = homework[i];
+    add_snailfish_numbers(hw_sum, to_reduce);
+    reduce_snailfish_number(to_reduce);
+    hw_sum = to_reduce;
+  }
+  fmt::print("Part 1: {}\n", get_magnitude(hw_sum));
 }
