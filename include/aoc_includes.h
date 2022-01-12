@@ -8,6 +8,7 @@
 #include <cassert>
 #include <chrono>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <numeric>
 #include <regex>
