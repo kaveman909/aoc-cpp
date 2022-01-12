@@ -95,8 +95,7 @@ static bool split_into_pair(string &str) {
         left = num / 2;
         right = left + 1;
       }
-      const string splt = fmt::format("[{},{}]", left, right);
-      str.replace(i, 2, splt);
+      str.replace(i, 2, fmt::format("[{},{}]", left, right));
       return true;
     }
   }
@@ -106,7 +105,7 @@ static bool split_into_pair(string &str) {
 void aoc(char *f) {
   scn::owning_file file{f, "r"};
   vector<string> homework;
-  const auto result = scn::scan_list(file, homework, '\n');
+  scn::scan_list(file, homework, '\n');
 
   for (size_t i = 0; i < homework.size() - 1; i++) {
     auto &to_reduce = homework[i + 1];
@@ -124,15 +123,10 @@ void aoc(char *f) {
     }
   }
   auto &hw_sum = homework.back();
-  while (1) {
-    if (auto [match, left, right] = ctre::search<R"(\[(\d+),(\d+)\])">(hw_sum);
-        match) {
-      const int magnitude =
-          3 * atoi(&*left.begin()) + 2 * atoi(&*right.begin());
-      hw_sum.replace(match.begin(), match.end(), to_string(magnitude));
-      continue;
-    }
-    break;
+  while (auto match = ctre::search<R"(\[(\d+),(\d+)\])">(hw_sum)) {
+    const int magnitude =
+        3 * atoi(&*match.get<1>().begin()) + 2 * atoi(&*match.get<2>().begin());
+    hw_sum.replace(match.begin(), match.end(), to_string(magnitude));
   }
   fmt::print("Part 1: {}\n", hw_sum);
 }
