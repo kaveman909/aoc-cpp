@@ -141,17 +141,20 @@ void aoc(char *f) {
   }
   fmt::print("Part 1: {}\n", get_magnitude(hw_sum));
 
-  vector<int> combs;
-  combs.resize(homework.size());
-  iota(combs.begin(), combs.end(), 0);
   int max_mag = 0;
-  for (auto &&comb : iter::combinations(combs, 2)) {
-    for (auto &&perm : iter::permutations(comb)) {
-      auto to_reduce =
-          add_snailfish_numbers(homework[perm[0]], homework[perm[1]]);
-      reduce_snailfish_number(to_reduce);
-      const auto mag = get_magnitude(to_reduce);
-      max_mag = (mag > max_mag) ? mag : max_mag;
+  {
+    MeasureTime m{"Part 2"};
+    vector<int> combs;
+    combs.resize(homework.size());
+    iota(combs.begin(), combs.end(), 0);
+    for (auto &&comb : iter::combinations(combs, 2)) {
+      for (auto &&perm : iter::permutations(comb)) {
+        auto to_reduce =
+            add_snailfish_numbers(homework[perm[0]], homework[perm[1]]);
+        reduce_snailfish_number(to_reduce);
+        const auto mag = get_magnitude(to_reduce);
+        max_mag = (mag > max_mag) ? mag : max_mag;
+      }
     }
   }
   fmt::print("Part 2: {}\n", max_mag);
