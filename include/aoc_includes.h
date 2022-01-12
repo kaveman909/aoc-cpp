@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "aoc_util.h"
+#include "ctre.hpp"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
 #include "itertools.hpp"

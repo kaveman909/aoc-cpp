@@ -7,3 +7,6 @@
 [submodule "lib/scnlib"]
 	path = lib/scnlib
 	url = https://github.com/eliaskosunen/scnlib.git
+[submodule "lib/ctre"]
+	path = lib/ctre
+	url = https://github.com/hanickadot/compile-time-regular-expressions.git
