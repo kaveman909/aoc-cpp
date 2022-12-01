@@ -1,2 +1,2 @@
-# aoc-2021
-Advent of Code 2021
+# aoc-cpp
+Advent of Code in C++
