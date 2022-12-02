@@ -42,5 +42,5 @@ void aoc(char *f) {
                             [](const Moves &m) { return get_points2(m); });
 
   fmt::print("Part 1: {}\n", part1);
-  fmt::print("Part 1: {}\n", part2);
+  fmt::print("Part 2: {}\n", part2);
 }
