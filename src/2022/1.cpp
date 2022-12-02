@@ -22,7 +22,7 @@ void aoc(char *f) {
   std::vector<int> sums;
   std::transform(
       weights.begin(), weights.end(), std::back_inserter(sums),
-      [](auto in) { return std::accumulate(in.begin(), in.end(), 0); });
+      [](const auto in) { return std::accumulate(in.begin(), in.end(), 0); });
   std::sort(sums.begin(), sums.end());
   fmt::print("Part 1: {}\n", sums.back());
   fmt::print("Part 2: {}\n",
