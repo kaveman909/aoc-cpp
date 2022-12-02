@@ -26,8 +26,6 @@ static int get_points(const Moves &moves) {
 }
 
 void aoc(char *f) {
-  (void)f;
-
   const auto guide = process_input(f, [](const std::string &s) {
     const auto [result, theirs, ours] = scn::scan_tuple<char, char>(s, "{} {}");
     return Moves{ours - 'X', theirs - 'A'};
