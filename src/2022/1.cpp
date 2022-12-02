@@ -18,12 +18,13 @@ static auto local_process_input(char *fpath) {
 
 void aoc(char *f) {
   const auto weights = local_process_input(f);
-  const auto max = std::reduce(
-      weights.begin(), weights.end(), std::vector<int>{},
-      [&](const auto a, const auto b) {
-        const auto max_ab = std::max(std::accumulate(a.begin(), a.end(), 0),
-                                     std::accumulate(b.begin(), b.end(), 0));
-        return std::vector{max_ab};
-      });
-  fmt::print("Part 1: {}\n", max[0]);
+
+  std::vector<int> sums;
+  std::transform(
+      weights.begin(), weights.end(), std::back_inserter(sums),
+      [](auto in) { return std::accumulate(in.begin(), in.end(), 0); });
+  std::sort(sums.begin(), sums.end());
+  fmt::print("Part 1: {}\n", sums.back());
+  fmt::print("Part 2: {}\n",
+             std::accumulate(sums.rbegin(), sums.rbegin() + 3, 0));
 }
