@@ -5,11 +5,21 @@ struct Moves {
   int theirs;
 };
 
+static int get_points2(const Moves &moves) {
+  constexpr std::array<std::array<int, 3>, 3> point_map = {
+      {{2, 0, 1}, {0, 1, 2}, {1, 2, 0}}};
+
+  const auto match_points = 3 * moves.ours;
+  const auto choice_points = point_map[moves.ours][moves.theirs] + 1;
+
+  return match_points + choice_points;
+}
+
 static int get_points(const Moves &moves) {
   constexpr std::array<std::array<int, 3>, 3> point_map = {
-      {{3, 0, 6}, {6, 3, 0}, {0, 6, 3}}};
+      {{1, 0, 2}, {2, 1, 0}, {0, 2, 1}}};
 
-  const auto match_points = point_map[moves.ours][moves.theirs];
+  const auto match_points = 3 * point_map[moves.ours][moves.theirs];
   const auto choice_points = moves.ours + 1;
 
   return match_points + choice_points;
@@ -27,5 +37,10 @@ void aoc(char *f) {
       std::transform_reduce(guide.begin(), guide.end(), 0, std::plus<>(),
                             [](const Moves &m) { return get_points(m); });
 
+  const auto part2 =
+      std::transform_reduce(guide.begin(), guide.end(), 0, std::plus<>(),
+                            [](const Moves &m) { return get_points2(m); });
+
   fmt::print("Part 1: {}\n", part1);
+  fmt::print("Part 1: {}\n", part2);
 }
