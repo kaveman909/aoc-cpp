@@ -33,8 +33,8 @@ void aoc(char *f) {
     MeasureTime m("Part 1");
     for (const auto &rucksack : rucksacks) {
       const auto &half = rucksack.size() / 2;
-      const std::string_view left(rucksack.c_str(), half);
-      const std::string_view right(rucksack.c_str() + half, half);
+      const std::string_view left(rucksack.begin(), rucksack.begin() + half);
+      const std::string_view right(rucksack.begin() + half, rucksack.end());
       sum += priority(rucksack_compare(left, right)[0]);
     }
   }
