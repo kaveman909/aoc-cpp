@@ -31,7 +31,6 @@ void aoc(char *f) {
   int sum = 0;
   {
     MeasureTime m("Part 1");
-
     for (const auto &rucksack : rucksacks) {
       const auto &half = rucksack.size() / 2;
       const std::string_view left(rucksack.c_str(), half);
@@ -42,9 +41,9 @@ void aoc(char *f) {
   fmt::print("Part 1: {}\n", sum);
 
   int sum2 = 0;
+  assert(rucksacks.size() % 3 == 0);
   {
     MeasureTime m("Part 2");
-    assert(rucksacks.size() % 3 == 0);
     for (size_t i = 0; i < rucksacks.size(); i += 3) {
       const auto comp1 = rucksack_compare(rucksacks[i], rucksacks[i + 1]);
       const auto comp2 = rucksack_compare(comp1, rucksacks[i + 2]);
