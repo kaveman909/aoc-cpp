@@ -8,7 +8,7 @@ void aoc(char *f) {
                                           "target area: x={}..{}, y={}..{}");
 
   int y_max_cand = 0;
-  int y_veli_max;
+  int y_veli_max = 0;
   for (int y_veli = 1; y_veli < 100; y_veli++) {
     int y = 0;
     int y_max2 = 0;

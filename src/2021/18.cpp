@@ -7,8 +7,8 @@ static string add_snailfish_numbers(const string &left, const string &right) {
 }
 
 static auto get_explode_index(const string &str) {
-  int ei;
-  int eie;
+  int ei = 0;
+  int eie = 0;
   for (size_t i = 0, count = 0; const auto &ch : str) {
     if (ch == '[') {
       if (++count == 5) {

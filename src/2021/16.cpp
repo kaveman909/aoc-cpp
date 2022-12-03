@@ -147,7 +147,7 @@ std::uint32_t get_version_sum(const Packet &packet_in) {
 }
 
 std::uint64_t get_packet_value(const Packet &packet_in) {
-  std::uint64_t value;
+  std::uint64_t value = 0;
   switch (packet_in.header.type_id) {
     case TypeId::Sum:
       value = 0;
