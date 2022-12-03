@@ -7,7 +7,8 @@ int priority(char c) {
   return c - 'A' + 27;
 }
 
-std::string rucksack_compare(const std::string &ruck_a, const std::string &ruck_b) {
+std::string rucksack_compare(const std::string &ruck_a,
+                             const std::string &ruck_b) {
   std::unordered_set<char> ruck_a_set;
   std::unordered_set<char> overlap_set;
   std::string overlap;
@@ -53,5 +54,4 @@ void aoc(char *f) {
     sum2 += priority(comp2[0]);
   }
   fmt::print("Part 2: {}\n", sum2);
-
 }
