@@ -43,12 +43,19 @@ static auto local_process_input(char *fpath) {
 
 void aoc(char *f) {
   const auto pairs = local_process_input(f);
-  const int contains =
-      std::count_if(pairs.begin(), pairs.end(),
-                    [](const Pair &p) { return p.fully_contains(); });
+  int contains;
+  {
+    MeasureTime m{"Part 1"};
+    contains = std::count_if(pairs.begin(), pairs.end(),
+                             [](const Pair &p) { return p.fully_contains(); });
+  }
   fmt::print("Part 1: {}\n", contains);
 
-  const int overlaps = std::count_if(
-      pairs.begin(), pairs.end(), [](const Pair &p) { return p.overlaps(); });
+  int overlaps;
+  {
+    MeasureTime m{"Part 2"};
+    overlaps = std::count_if(pairs.begin(), pairs.end(),
+                             [](const Pair &p) { return p.overlaps(); });
+  }
   fmt::print("Part 2: {}\n", overlaps);
 }
