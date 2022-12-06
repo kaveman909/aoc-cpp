@@ -11,6 +11,7 @@
 #include <iostream>
 #include <map>
 #include <numeric>
+#include <ranges>
 #include <regex>
 #include <stack>
 #include <string>
