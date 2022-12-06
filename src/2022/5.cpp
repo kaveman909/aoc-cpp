@@ -48,29 +48,32 @@ static auto local_process_input(char *fpath) {
 }
 
 void aoc(char *f) {
-  auto [stacks, instructions] = local_process_input(f);
-  auto stacks1 = stacks;
-  for (const auto &inst : instructions) {
-    std::stack<char> temp;
-    for (int i = 0; i < inst.move; i++) {
-      stacks1[inst.to].push(stacks1[inst.from].top());
-      stacks1[inst.from].pop();
+  std::string tops;
+  std::string tops1;
+  {
+    MeasureTime m{"Both Parts"};
+    auto [stacks, instructions] = local_process_input(f);
+    auto stacks1 = stacks;
+    for (const auto &inst : instructions) {
+      std::stack<char> temp;
+      for (int i = 0; i < inst.move; i++) {
+        stacks1[inst.to].push(stacks1[inst.from].top());
+        stacks1[inst.from].pop();
 
-      temp.push(stacks[inst.from].top());
-      stacks[inst.from].pop();
+        temp.push(stacks[inst.from].top());
+        stacks[inst.from].pop();
+      }
+      for (int i = 0; i < inst.move; i++) {
+        stacks[inst.to].push(temp.top());
+        temp.pop();
+      }
     }
-    for (int i = 0; i < inst.move; i++) {
-      stacks[inst.to].push(temp.top());
-      temp.pop();
+    for (const auto &st : stacks) {
+      tops += st.top();
     }
-  }
-  std::string tops = "";
-  std::string tops1 = "";
-  for (const auto &st : stacks) {
-    tops += st.top();
-  }
-  for (const auto &st : stacks1) {
-    tops1 += st.top();
+    for (const auto &st : stacks1) {
+      tops1 += st.top();
+    }
   }
   fmt::print("Part 1: {}\n", tops1);
   fmt::print("Part 2: {}\n", tops);
