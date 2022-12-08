@@ -10,3 +10,6 @@
 [submodule "lib/ctre"]
 	path = lib/ctre
 	url = https://github.com/hanickadot/compile-time-regular-expressions.git
+[submodule "lib/eigen"]
+	path = lib/eigen
+	url = https://gitlab.com/libeigen/eigen.git
