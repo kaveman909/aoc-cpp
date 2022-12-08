@@ -12,6 +12,6 @@ void aoc(char *f) {
   std::vector seen(forest.size(), std::vector<bool>(forest[0].size()));
   // left side
   for (int row = 0; row < forest.size(); row++) {
-    
+    // if (row == 0) 
   }
 }
