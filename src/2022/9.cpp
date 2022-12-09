@@ -27,10 +27,9 @@ void aoc(char *f) {
     MeasureTime m{"Both Parts"};
     for (const auto &instruction : instructions) {
       for (int i = 0; i < instruction.spaces; i++) {
-        Coord direction = instruction.direction;
         // update head knot
-        knots.front().first += direction.first;
-        knots.front().second += direction.second;
+        knots.front().first += instruction.direction.first;
+        knots.front().second += instruction.direction.second;
         // propogate movement to the other 9 knots
         for (size_t j = 1; j < knots.size(); j++) {
           auto &head = knots[j - 1];
