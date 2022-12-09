@@ -7,6 +7,8 @@ struct Instruction {
   int spaces;
 };
 
+static int sign(const int in) { return (in > 0) ? 1 : ((in < 0) ? -1 : 0); }
+
 void aoc(char *f) {
   auto instructions = process_input(f, [](const std::string &s) {
     const auto [result, direction, spaces] =
@@ -17,24 +19,40 @@ void aoc(char *f) {
     return Instruction{m.at(direction), spaces};
   });
 
-  Coord head = {0, 0};
-  Coord tail = {0, 0};
-  std::unordered_set<Coord, boost::hash<Coord>> visited = {tail};
+  std::array<Coord, 10> knots; // will be default-constructed with 0s
+  std::unordered_set<Coord, boost::hash<Coord>> visited1 = {knots[1]};
+  std::unordered_set<Coord, boost::hash<Coord>> visited2 = {knots.back()};
 
   for (const auto &instruction : instructions) {
     for (int i = 0; i < instruction.spaces; i++) {
-      // update head
-      head.first += instruction.direction.first;
-      head.second += instruction.direction.second;
-      // check if tail must move
-      if (std::abs(head.first - tail.first) > 1 ||
-          std::abs(head.second - tail.second) > 1) {
-        tail.first = head.first - instruction.direction.first;
-        tail.second = head.second - instruction.direction.second;
+      Coord direction = instruction.direction;
+      // update head knot
+      knots.front().first += direction.first;
+      knots.front().second += direction.second;
+      // propogate movement to the other 9 knots
+      for (size_t j = 1; j < knots.size(); j++) {
+        auto &head = knots[j - 1];
+        auto &tail = knots[j];
+        const auto x_diff = head.first - tail.first;
+        const auto y_diff = head.second - tail.second;
+        // check if nearest tail knot should move
+        if ((std::abs(x_diff) + std::abs(y_diff)) >= 3) {
+          tail.first += sign(x_diff);
+          tail.second += sign(y_diff);
+        } else if (std::abs(x_diff) > 1) {
+          tail.first += sign(x_diff);
+        } else if (std::abs(y_diff) > 1) {
+          tail.second += sign(y_diff);
+        } else {
+          // if this tail isn't moving, none of the further tails will move
+          break;
+        }
       }
       // try adding tail location to set
-      visited.insert(tail);
+      visited1.insert(knots[1]);
+      visited2.insert(knots.back());
     }
   }
-  fmt::print("Part 1: {}\n", visited.size());
+  fmt::print("Part 1: {}\n", visited1.size());
+  fmt::print("Part 2: {}\n", visited2.size());
 }
