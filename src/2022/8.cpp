@@ -33,10 +33,12 @@ void aoc(char *f) {
                    [](const char c) { return (int)(c - '0'); });
     return trees;
   });
+  const size_t ROWS = fvec.size();
+  const size_t COLS = fvec[0].size();
 
-  ForestMatrix forest(fvec.size(), fvec[0].size());
-  for (size_t r = 0; r < fvec.size(); r++) {
-    for (size_t c = 0; c < fvec[0].size(); c++) {
+  ForestMatrix forest(ROWS, COLS);
+  for (size_t r = 0; r < ROWS; r++) {
+    for (size_t c = 0; c < COLS; c++) {
       forest(r, c) = Location{fvec[r][c], false};
     }
   }
@@ -53,4 +55,44 @@ void aoc(char *f) {
                               [](const Location &a) { return a.visible; });
   }
   fmt::print("Part 1: {}\n", total_visible);
+
+  int max_scenic_score = 0;
+  for (int r = 0; r < (int)ROWS; r++) {
+    for (int c = 0; c < (int)COLS; c++) {
+      const int tree = forest(r, c).height;
+      std::array<int, 4> sides = {0, 0, 0, 0};
+      // down
+      for (int rf = r + 1; rf < (int)ROWS; rf++) {
+        sides[0]++;
+        if (forest(rf, c).height >= tree) {
+          break;
+        }
+      }
+      // up
+      for (int rb = r - 1; rb >= 0; rb--) {
+        sides[1]++;
+        if (forest(rb, c).height >= tree) {
+          break;
+        }
+      }
+      // right
+      for (int cf = c + 1; cf < (int)COLS; cf++) {
+        sides[2]++;
+        if (forest(r, cf).height >= tree) {
+          break;
+        }
+      }
+      // left
+      for (int cb = c - 1; cb >= 0; cb--) {
+        sides[3]++;
+        if (forest(r, cb).height >= tree) {
+          break;
+        }
+      }
+      const int scenic_score =
+          std::accumulate(sides.begin(), sides.end(), 1, std::multiplies<>());
+      max_scenic_score = std::max(scenic_score, max_scenic_score);
+    }
+  }
+  fmt::print("Part 2: {}\n", max_scenic_score);
 }
