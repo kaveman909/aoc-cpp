@@ -19,7 +19,7 @@ void aoc(char *f) {
     return Instruction{m.at(direction), spaces};
   });
 
-  std::array<Coord, 10> knots; // will be default-constructed with 0s
+  std::array<Coord, 10> knots;  // will be default-constructed with 0s
   std::unordered_set<Coord, boost::hash<Coord>> visited1 = {knots[1]};
   std::unordered_set<Coord, boost::hash<Coord>> visited2 = {knots.back()};
 
@@ -36,16 +36,11 @@ void aoc(char *f) {
         const auto x_diff = head.first - tail.first;
         const auto y_diff = head.second - tail.second;
         // check if nearest tail knot should move
-        if ((std::abs(x_diff) + std::abs(y_diff)) >= 3) {
-          tail.first += sign(x_diff);
-          tail.second += sign(y_diff);
-        } else if (std::abs(x_diff) > 1) {
-          tail.first += sign(x_diff);
-        } else if (std::abs(y_diff) > 1) {
-          tail.second += sign(y_diff);
-        } else {
-          // if this tail isn't moving, none of the further tails will move
+        if (std::abs(x_diff) <= 1 && std::abs(y_diff) <= 1) {
           break;
+        } else {
+          tail.first += sign(x_diff);
+          tail.second += sign(y_diff);
         }
       }
       // try adding tail location to set
