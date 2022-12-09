@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(include lib/cppitertools lib/fmt/include
                     /opt/homebrew/Cellar/boost/1.80.0/include
-                    lib/ctre/include)
+                    lib/ctre/include lib/eigen)
 
 enable_testing()
 
