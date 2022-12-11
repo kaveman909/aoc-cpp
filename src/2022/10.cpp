@@ -10,11 +10,19 @@ void aoc(char *f) {
   int x = 1;
   int next_threshold = 20;
   int signal_strength_sum = 0;
+  fmt::print("Part 2:\n");
   for (const auto instr : instructions) {
-    if (0 == instr) {
+    const int cycles = (0 == instr) ? 1 : 2;
+    for (int i = 0; i < cycles; i++) {
+      if (abs(x - (cycle_count % 40)) <= 1) {
+        fmt::print("#");
+      } else {
+        fmt::print(" ");
+      }
       cycle_count++;
-    } else {
-      cycle_count += 2;
+      if (0 == (cycle_count % 40)) {
+        fmt::print("\n");
+      }
     }
     if (cycle_count >= next_threshold) {
       signal_strength_sum += (x * next_threshold);
