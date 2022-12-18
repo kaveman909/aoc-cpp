@@ -1,11 +1,11 @@
 #include "aoc_includes.h"
 
-int add(int x, int y) { return x + y; }
+long add(long x, long y) { return x + y; }
 
-int mul(int x, int y) { return x * y; }
+long mul(long x, long y) { return x * y; }
 
 struct Operation {
-  int (*op)(int, int);
+  long (*op)(long, long);
   int rhs;
 };
 
@@ -66,30 +66,27 @@ auto local_process_input(char *f) {
   return monkeys;
 }
 
-void aoc(char *f) {
-  auto monkeys = local_process_input(f);
-  std::vector<int> inspection_counts(monkeys.size(), 0);
-#if 0
-  for (const auto &monkey : monkeys) {
-    fmt::print(
-        "id={}, items={}, op={}:{}, div_by={}, throw_to={}\n", monkey.id,
-        monkey.items,
-        (monkey.op.op == add ? "add" : (monkey.op.op == mul ? "mul" : "?")),
-        monkey.op.rhs, monkey.div_by, monkey.throw_to);
-  }
-#endif
-  for (int rounds = 0; rounds < 20; rounds++) {
+long simulate_monkeys(std::vector<Monkey> monkeys, const int num_rounds,
+                      const int div) {
+  std::vector<long> inspection_counts(monkeys.size(), 0);
+  const long mod_reduce = std::transform_reduce(
+      monkeys.begin(), monkeys.end(), 1, std::multiplies<>(),
+      [](const auto &a) { return a.div_by; });
+
+  for (int rounds = 0; rounds < num_rounds; rounds++) {
     for (auto &monkey : monkeys) {
       inspection_counts[monkey.id] += monkey.items.size();
       for (auto &item : monkey.items) {
-        int worry_level = item;
-        int rhs = monkey.op.rhs ? monkey.op.rhs : worry_level;
+        long worry_level = item;
+        const long rhs = monkey.op.rhs ? monkey.op.rhs : worry_level;
         worry_level = monkey.op.op(worry_level, rhs);
-        worry_level /= 3;
+        worry_level /= div;
         if (worry_level % monkey.div_by == 0) {
-          monkeys[monkey.throw_to[0]].items.emplace_back(worry_level);
+          monkeys[monkey.throw_to[0]].items.emplace_back(worry_level %
+                                                         mod_reduce);
         } else {
-          monkeys[monkey.throw_to[1]].items.emplace_back(worry_level);
+          monkeys[monkey.throw_to[1]].items.emplace_back(worry_level %
+                                                         mod_reduce);
         }
       }
       // after all items are thrown, monkey is holding nothing, therefore
@@ -98,8 +95,12 @@ void aoc(char *f) {
     }
   }
   std::sort(inspection_counts.begin(), inspection_counts.end());
-  int monkey_business =
-      inspection_counts.back() * *(inspection_counts.rbegin() + 1);
+  return inspection_counts.back() * *(inspection_counts.rbegin() + 1);
+}
 
-  fmt::print("Part 1: {}\n", monkey_business);
+void aoc(char *f) {
+  auto monkeys = local_process_input(f);
+
+  fmt::print("Part 1: {}\n", simulate_monkeys(monkeys, 20, 3));
+  fmt::print("Part 2: {}\n", simulate_monkeys(monkeys, 10'000, 1));
 }
