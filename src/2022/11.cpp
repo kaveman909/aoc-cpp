@@ -10,7 +10,8 @@ struct Operation {
 };
 
 struct Monkey {
-  std::vector<int> items;
+  int id;
+  std::list<int> items;
   Operation op;
   int div_by;
   std::array<int, 2> throw_to;
@@ -20,10 +21,12 @@ auto local_process_input(char *f) {
   std::vector<Monkey> monkeys;
   std::ifstream in(f);
   char buf[MAX_LEN];
+  int current_monkey = 0;
 
   while (in.getline(buf, MAX_LEN)) {  // Monkey X
-    in.getline(buf, MAX_LEN);         // Starting items: ...
     Monkey monkey;
+    monkey.id = current_monkey++;
+    in.getline(buf, MAX_LEN);  // Starting items: ...
     std::string s(&buf[0] + strlen("  Starting Items: "));
     const auto r1 =
         scn::scan_list_ex(s, monkey.items, scn::list_separator(','));
@@ -65,13 +68,38 @@ auto local_process_input(char *f) {
 
 void aoc(char *f) {
   auto monkeys = local_process_input(f);
+  std::vector<int> inspection_counts(monkeys.size(), 0);
 #if 0
   for (const auto &monkey : monkeys) {
     fmt::print(
-        "items={}, op={}:{}, div_by={}, throw_to={}\n", monkey.items,
+        "id={}, items={}, op={}:{}, div_by={}, throw_to={}\n", monkey.id,
+        monkey.items,
         (monkey.op.op == add ? "add" : (monkey.op.op == mul ? "mul" : "?")),
         monkey.op.rhs, monkey.div_by, monkey.throw_to);
   }
 #endif
+  for (int rounds = 0; rounds < 20; rounds++) {
+    for (auto &monkey : monkeys) {
+      inspection_counts[monkey.id] += monkey.items.size();
+      for (auto &item : monkey.items) {
+        int worry_level = item;
+        int rhs = monkey.op.rhs ? monkey.op.rhs : worry_level;
+        worry_level = monkey.op.op(worry_level, rhs);
+        worry_level /= 3;
+        if (worry_level % monkey.div_by == 0) {
+          monkeys[monkey.throw_to[0]].items.emplace_back(worry_level);
+        } else {
+          monkeys[monkey.throw_to[1]].items.emplace_back(worry_level);
+        }
+      }
+      // after all items are thrown, monkey is holding nothing, therefore
+      // clear the list
+      monkey.items.clear();
+    }
+  }
+  std::sort(inspection_counts.begin(), inspection_counts.end());
+  int monkey_business =
+      inspection_counts.back() * *(inspection_counts.rbegin() + 1);
 
+  fmt::print("Part 1: {}\n", monkey_business);
 }
