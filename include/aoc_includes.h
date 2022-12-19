@@ -15,11 +15,13 @@
 #include <numeric>
 #include <ranges>
 #include <regex>
+#include <set>
 #include <stack>
 #include <string>
 #include <tuple>
 #include <type_traits>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "aoc_util.h"
