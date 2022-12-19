@@ -9,7 +9,7 @@ struct Location {
   int r;
   int c;
   int distance = DIST_INF;
-  bool visited = false;
+  bool visited = false; 
   std::vector<Location *> adj;
   static Location *end;
 
@@ -32,7 +32,7 @@ struct Location {
 
   // Implement Dijkstra per
   // https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Algorithm
-  void dijkstra(void) {
+  int dijkstra(void) {
     unvisited.erase(unvisited.begin());
     for (Location *loc : adj) {
       if (loc->visited) {
@@ -46,15 +46,27 @@ struct Location {
     }
     visited = true;
     if (this == end) {
-      fmt::print("Part 1: {}\n", distance);
-      return;
+      return distance;
     }
-    assert(unvisited.size() > 0);
-    (*unvisited.begin())->dijkstra();
+    if (unvisited.size() == 0) {
+      // 'E' is unreachable!
+      return DIST_INF;
+    }
+    return (*unvisited.begin())->dijkstra();
   }
 };
 Location *Location::end;
 std::set<Location *, Location::LocationCompare> Location::unvisited;
+
+void reset_map(auto &map) {
+  Location::unvisited.clear();
+  for (auto &row : map) {
+    for (auto &loc : row) {
+      loc.distance = DIST_INF;
+      loc.visited = false;
+    }
+  }
+}
 
 void aoc(char *f) {
   auto map = process_input(f, [](const auto &s) {
@@ -106,5 +118,29 @@ void aoc(char *f) {
   // Starting node should have distance 0
   Location::unvisited.insert(start);
   start->distance = 0;
-  start->dijkstra();
+  int min_from_start = DIST_INF;
+  {
+    MeasureTime m("Part 1");
+    min_from_start = start->dijkstra();
+  }
+  fmt::print("Part 1: {}\n", min_from_start);
+
+  int min_overall = DIST_INF;
+  {
+    MeasureTime m("Part 2");
+    for (auto &row : map) {
+      for (auto &loc : row) {
+        if (loc.height == 0) {
+          // found an 'a' location; reset and find the shortest from here
+          reset_map(map);
+          Location::unvisited.insert(&loc);
+          loc.distance = 0;
+          if (int new_path = loc.dijkstra(); new_path < min_overall) {
+            min_overall = new_path;
+          }
+        }
+      }
+    }
+  }
+  fmt::print("Part 2: {}\n", min_overall);
 }

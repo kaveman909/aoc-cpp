@@ -9,7 +9,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wuninitialized -Wno-missing-field-initializers -Wno-unused-variable -Wno-restrict")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-Werror -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(include lib/cppitertools lib/fmt/include
                     /opt/homebrew/Cellar/boost/1.80.0/include
