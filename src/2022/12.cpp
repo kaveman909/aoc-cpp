@@ -9,7 +9,7 @@ struct Location {
   int r;
   int c;
   int distance = DIST_INF;
-  bool visited = false; 
+  bool visited = false;
   std::vector<Location *> adj;
   static Location *end;
 
