@@ -17,9 +17,8 @@ struct Location {
     bool operator()(const Location *lhs, const Location *rhs) const {
       if (lhs->distance == rhs->distance) {
         return lhs < rhs;
-      } else {
-        return lhs->distance < rhs->distance;
       }
+      return lhs->distance < rhs->distance;
     }
   };
   static std::set<Location *, LocationCompare> unvisited;
